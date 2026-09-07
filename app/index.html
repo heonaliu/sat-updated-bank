@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAT Cram — Practice</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ HOME / DASHBOARD ============ -->
+  <div id="view-home">
+    <div class="home-header">
+      <h1>SAT Cram Dashboard</h1>
+      <div class="countdown" id="countdown-text"></div>
+    </div>
+    <p class="home-sub">150 Reading &amp; Writing questions · 120 Math questions, pulled from your practice bank. Progress is saved automatically in this browser.</p>
+
+    <div class="home-links">
+      <button class="btn secondary" id="btn-strategy">📘 1500+ Strategy Guide</button>
+      <button class="btn ghost" id="btn-reset">Reset all progress</button>
+    </div>
+
+    <div class="section-cards">
+      <div class="card" id="card-english">
+        <h2>Reading &amp; Writing</h2>
+        <div class="progress-bar-track" id="pb-english"></div>
+        <div class="stat-row">
+          <div class="stat"><div class="num" id="e-answered">0/150</div><div class="lbl">Answered</div></div>
+          <div class="stat correct"><div class="num" id="e-correct">0</div><div class="lbl">Correct</div></div>
+          <div class="stat incorrect"><div class="num" id="e-incorrect">0</div><div class="lbl">Incorrect</div></div>
+          <div class="stat flagged"><div class="num" id="e-flagged">0</div><div class="lbl">Flagged</div></div>
+        </div>
+        <div class="domain-breakdown" id="e-domains"></div>
+        <div class="card-actions">
+          <button class="btn" data-start="english-all">Start / Continue</button>
+          <button class="btn secondary" data-start="english-incorrect">Review Incorrect</button>
+          <button class="btn secondary" data-start="english-flagged">Review Flagged</button>
+        </div>
+        <div class="filter-block">
+          <h3>Filter by category</h3>
+          <div class="chip-row" id="e-domain-filters"></div>
+        </div>
+      </div>
+
+      <div class="card" id="card-math">
+        <h2>Math</h2>
+        <div class="progress-bar-track" id="pb-math"></div>
+        <div class="stat-row">
+          <div class="stat"><div class="num" id="m-answered">0/120</div><div class="lbl">Answered</div></div>
+          <div class="stat correct"><div class="num" id="m-correct">0</div><div class="lbl">Correct</div></div>
+          <div class="stat incorrect"><div class="num" id="m-incorrect">0</div><div class="lbl">Incorrect</div></div>
+          <div class="stat flagged"><div class="num" id="m-flagged">0</div><div class="lbl">Flagged</div></div>
+        </div>
+        <div class="domain-breakdown" id="m-domains"></div>
+        <div class="card-actions">
+          <button class="btn" data-start="math-all">Start / Continue</button>
+          <button class="btn secondary" data-start="math-incorrect">Review Incorrect</button>
+          <button class="btn secondary" data-start="math-flagged">Review Flagged</button>
+        </div>
+        <div class="filter-block">
+          <h3>Filter by category</h3>
+          <div class="chip-row" id="m-domain-filters"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TEST / PRACTICE VIEW ============ -->
+  <div id="view-test" class="hidden">
+    <div class="test-topbar">
+      <div class="tb-left">
+        <button class="tb-btn" id="btn-exit">← Dashboard</button>
+        <div>
+          <div class="tb-title" id="tb-title">Reading and Writing</div>
+          <div class="tb-sub" id="tb-sub"></div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <button class="tb-btn" id="btn-notes">Notes</button>
+        <button class="tb-btn" id="btn-ref">Reference</button>
+        <button class="tb-btn hidden" id="btn-calc">Calculator</button>
+        <button class="tb-btn" id="btn-directions">Directions</button>
+      </div>
+    </div>
+
+    <div class="test-body" id="test-body">
+      <div class="pane left hidden" id="pane-stem"></div>
+      <div class="pane right" id="pane-question"></div>
+    </div>
+
+    <div class="test-bottombar">
+      <div id="bb-progress" style="font-size:13px;color:var(--text-dim);"></div>
+      <div class="bb-center">
+        <button class="bb-navgrid-btn" id="btn-navgrid">Question <span id="bb-qnum">1</span> of <span id="bb-qtotal">150</span> ▾</button>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn ghost" id="btn-prev">Back</button>
+        <button class="btn" id="btn-next">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ STRATEGY VIEW ============ -->
+  <div id="view-strategy" class="hidden">
+    <div class="strategy-wrap" id="strategy-content"></div>
+  </div>
+
+</div>
+
+<!-- nav grid overlay -->
+<div id="nav-overlay" class="hidden">
+  <div class="nav-grid-panel">
+    <h3>Question Navigator</h3>
+    <div class="nav-legend">
+      <span><span class="legend-swatch" style="background:#fff;border:1.5px solid #d7dce1;"></span>Unanswered</span>
+      <span><span class="legend-swatch" style="background:#e1f4e5;border:1.5px solid #9bd6a9;"></span>Correct</span>
+      <span><span class="legend-swatch" style="background:#fbe4e2;border:1.5px solid #eba39c;"></span>Incorrect</span>
+      <span><span class="legend-swatch" style="background:#b8790a;"></span>Flagged</span>
+    </div>
+    <div class="nav-grid" id="nav-grid"></div>
+  </div>
+</div>
+
+<script src="data/english.js"></script>
+<script src="data/math.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

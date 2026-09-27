@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /questions_english/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /questions_math/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // One progress doc per subject per user: { [questionId]: {selected, checked, ...} },
+    // plus a 'flashcards' doc: { [word]: 'dont_know' | 'not_sure' | 'confident' }
+    // and a 'custom_flashcards' doc: { [cardId]: {word, definition, examples, month} }.
+    // Firestore rules can't iterate a dynamic-keyed map, so this only bounds the
+    // overall shape (owner-only access, a sane cap on question-entry count) rather
+    // than deep-validating every nested field — the real security boundary is the
+    // uid check; this is just cheap insurance against a runaway/buggy write.
+    match /users/{uid}/progress/{subject} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if request.auth != null && request.auth.uid == uid
+                   && subject in ['english', 'math', 'flashcards', 'custom_flashcards']
+                   && request.resource.data.keys().size() < 500;
+    }
+  }
+}

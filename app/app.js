@@ -93,7 +93,7 @@ function buildTableHtml(table) {
 
 function buildContentHtml(text, table) {
   if (text == null) return '';
-  const parts = String(text).split(/(\[\[(?:FIGURE:[^\]]+|TABLE)\]\])/g);
+  const parts = String(text).split(/(\[\[(?:FIGURE:[^\]]+|TABLE|U|\/U)\]\])/g);
   let html = '';
   parts.forEach((part) => {
     const figMatch = part.match(/^\[\[FIGURE:([^\]]+)\]\]$/);
@@ -101,6 +101,10 @@ function buildContentHtml(text, table) {
       html += `<div class="figure-wrap"><img src="assets/figs/${figMatch[1]}" alt="figure"></div>`;
     } else if (part === '[[TABLE]]') {
       html += buildTableHtml(table);
+    } else if (part === '[[U]]') {
+      html += '<u>';
+    } else if (part === '[[/U]]') {
+      html += '</u>';
     } else {
       // KaTeX auto-render's $ delimiter doesn't reliably respect a backslash escape,
       // so swap literal "\$" (a real dollar amount) for a look-alike char it won't match,
